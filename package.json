@@ -1,0 +1,21 @@
+{
+  "name": "wkt-parser",
+  "version": "1.0.0",
+  "keywords": [
+    "wkt",
+    "wkb",
+    "geojson",
+    "parser"
+  ],
+  "description": "Module to help parse GeoJSONs to WKT and back",
+  "main": "index.js",
+  "repository": "https://github.com/alrico88/wkt-parser",
+  "author": "Alberto Rico",
+  "license": "MIT",
+  "dependencies": {
+    "wkx": "^0.4.8"
+  },
+  "devDependencies": {
+    "eslint": "^5.4"
+  }
+}
