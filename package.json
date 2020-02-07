@@ -1,5 +1,5 @@
 {
-  "name": "wkt-parser",
+  "name": "wkt-parser-helper",
   "version": "1.0.0",
   "keywords": [
     "wkt",
@@ -9,7 +9,7 @@
   ],
   "description": "Module to help parse GeoJSONs to WKT and back",
   "main": "index.js",
-  "repository": "https://github.com/alrico88/wkt-parser",
+  "repository": "https://github.com/alrico88/wkt-parser-helper",
   "author": "Alberto Rico",
   "license": "MIT",
   "dependencies": {
