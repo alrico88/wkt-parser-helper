@@ -1,0 +1,57 @@
+const WktParser = require('./index');
+
+// TEST VARIABLES
+
+const TEST_FEATURE = {
+  type: 'Feature',
+  properties: {},
+  geometry: {
+    type: 'Polygon',
+    coordinates: [
+      [
+        [-3.706512451171875, 40.420074462890625],
+        [-3.70513916015625, 40.420074462890625],
+        [-3.70513916015625, 40.42144775390625],
+        [-3.706512451171875, 40.42144775390625],
+        [-3.706512451171875, 40.420074462890625],
+      ],
+    ],
+  },
+};
+
+const TEST_FEATURE_WITH_PROPERTIES = Object.assign(TEST_FEATURE, {
+  properties: {
+    test: 'Test',
+  },
+});
+
+const TEST_FEATURE_AS_WKT =
+  'POLYGON((-3.706512451171875 40.420074462890625,-3.70513916015625 40.420074462890625,-3.70513916015625 40.42144775390625,-3.706512451171875 40.42144775390625,-3.706512451171875 40.420074462890625))';
+
+const TEST_FEATURE_COLLECTION = {
+  type: 'FeatureCollection',
+  features: [TEST_FEATURE, TEST_FEATURE],
+};
+
+const TEST_FEATURE_COLLECTION_AS_WKT =
+  'GEOMETRYCOLLECTION(POLYGON((-3.706512451171875 40.420074462890625,-3.70513916015625 40.420074462890625,-3.70513916015625 40.42144775390625,-3.706512451171875 40.42144775390625,-3.706512451171875 40.420074462890625)),POLYGON((-3.706512451171875 40.420074462890625,-3.70513916015625 40.420074462890625,-3.70513916015625 40.42144775390625,-3.706512451171875 40.42144775390625,-3.706512451171875 40.420074462890625)))';
+
+// TESTS
+
+test('Same GeoJSON should always return same WKT', () => {
+  expect(WktParser.convertToWK(TEST_FEATURE)).toBe(TEST_FEATURE_AS_WKT);
+});
+
+test('Same WKT should always return same Geometry', () => {
+  expect(WktParser.parseFromWK(TEST_FEATURE_AS_WKT)).toStrictEqual(TEST_FEATURE.geometry);
+});
+
+test('Same WKT should always return same Feature, with desired properties embedded', () => {
+  expect(WktParser.parseFromWK(TEST_FEATURE_AS_WKT, true, {
+      test: 'Test',
+    })).toStrictEqual(TEST_FEATURE_WITH_PROPERTIES);
+});
+
+test('Same GeoJSON FeatureCollection should always return same wkt GEOMETRYCOLLECTION', () => {
+  expect(WktParser.convertFeatureCollection(TEST_FEATURE_COLLECTION)).toBe(TEST_FEATURE_COLLECTION_AS_WKT);
+});
