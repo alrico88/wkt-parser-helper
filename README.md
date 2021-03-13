@@ -1,69 +1,185 @@
-<a name="WktParserHelper"></a>
+# wkt-parser-helper
 
-## WktParserHelper
+## Installation
 
-**Kind**: global class
+Using npm `npm i wkt-parser-helper`
 
-- [WktParserHelper](#WktParserHelper)
-  - [new WktParserHelper()](#new_WktParserHelper_new)
-  - ~~[.convertPolygonToWK()](#WktParserHelper.convertPolygonToWK)~~
-  - [.convertToWK(GeoJSON, [type])](#WktParserHelper.convertToWK) ⇒ <code>string</code> \| <code>Buffer</code>
-  - [.parseFromWK(item, [asFeature], [properties])](#WktParserHelper.parseFromWK) ⇒ <code>object</code>
-  - [.convertFeatureCollection(GeoJSON)](#WktParserHelper.convertFeatureCollection) ⇒ <code>string</code>
+Using yarn `yarn add wkt-parser-helper`
 
-<a name="new_WktParserHelper_new"></a>
+## Usage
 
-### new WktParserHelper()
+In CommonJS env
 
-WktParserHelper class
+```javascript
+const { parseFromWK } = require('wkt-parser-helper');
 
-<a name="WktParserHelper.convertPolygonToWK"></a>
+const geojson = parseFromWK(
+  'POLYGON((-3.706512451171875 40.420074462890625,-3.70513916015625 40.420074462890625,-3.70513916015625 40.42144775390625,-3.706512451171875 40.42144775390625,-3.706512451171875 40.420074462890625))'
+);
 
-### ~~WktParserHelper.convertPolygonToWK()~~
+// geojson is a Polygon Geometry
+```
 
-**_Deprecated_**
+Using imports
 
-Converts GeoJSON to Wkt or Wkb
+```javascript
+import { convertToWK } from 'wkt-parser-helper';
 
-**Kind**: static method of [<code>WktParserHelper</code>](#WktParserHelper)  
-<a name="WktParserHelper.convertToWK"></a>
+const myFeature: Feature = {
+  type: 'Feature',
+  properties: {},
+  geometry: {
+    type: 'Polygon',
+    coordinates: [
+      [
+        [-3.706512451171875, 40.420074462890625],
+        [-3.70513916015625, 40.420074462890625],
+        [-3.70513916015625, 40.42144775390625],
+        [-3.706512451171875, 40.42144775390625],
+        [-3.706512451171875, 40.420074462890625],
+      ],
+    ],
+  },
+};
 
-### WktParserHelper.convertToWK(GeoJSON, [type]) ⇒ <code>string</code> \| <code>Buffer</code>
+const myFeatureAsWKT = convertToWK(myFeature, 'wkt');
 
-Converts GeoJSON to WKT or WKB
+// myFeatureAsWKT is 'POLYGON((-3.706512451171875 40.420074462890625,-3.70513916015625 40.420074462890625,-3.70513916015625 40.42144775390625,-3.706512451171875 40.42144775390625,-3.706512451171875 40.420074462890625))'
+```
 
-**Kind**: static method of [<code>WktParserHelper</code>](#WktParserHelper)  
-**Returns**: <code>string</code> \| <code>Buffer</code> - WKT or WKB
+## Table of contents
 
-| Param   | Type                                                         | Default                      | Description                      |
-| ------- | ------------------------------------------------------------ | ---------------------------- | -------------------------------- |
-| GeoJSON | <code>Object</code>                                          |                              | GeoJSON to convert to WKT or WKB |
-| [type]  | <code>&#x27;wkt&#x27;</code> \| <code>&#x27;wkb&#x27;</code> | <code>&#x27;wkt&#x27;</code> |                                  |
+### Type aliases
 
-<a name="WktParserHelper.parseFromWK"></a>
+- [WKType](#wktype)
 
-### WktParserHelper.parseFromWK(item, [asFeature], [properties]) ⇒ <code>object</code>
+### Functions
 
-Parses from WKT or WKB
+- [convertFeatureCollection](#convertfeaturecollection)
+- [convertFeatureToWK](#convertfeaturetowk)
+- [convertGeometryToWK](#convertgeometrytowk)
+- [convertToWK](#converttowk)
+- [parseFromWK](#parsefromwk)
 
-**Kind**: static method of [<code>WktParserHelper</code>](#WktParserHelper)  
-**Returns**: <code>object</code> - GeoJSON
+## Type aliases
 
-| Param        | Type                                       | Default            | Description                                   |
-| ------------ | ------------------------------------------ | ------------------ | --------------------------------------------- |
-| item         | <code>string</code> \| <code>Buffer</code> |                    | WKT or WKB to convert to GeoJSON              |
-| [asFeature]  | <code>boolean</code>                       | <code>false</code> |                                               |
-| [properties] | <code>object</code>                        | <code>{}</code>    | Properties to embed resulting GeoJSON feature |
+### WKType
 
-<a name="WktParserHelper.convertFeatureCollection"></a>
+Ƭ **WKType**: _wkt_ \| _wkb_
 
-### WktParserHelper.convertFeatureCollection(GeoJSON) ⇒ <code>string</code>
+Defined in: index.ts:4
 
-Converts GeoJSON FeatureCollection to WKT GEOMETRYCOLLECTION
+## Functions
 
-**Kind**: static method of [<code>WktParserHelper</code>](#WktParserHelper)  
-**Returns**: <code>string</code> - WKT or WKT
+### convertFeatureCollection
 
-| Param   | Type                | Description                                 |
-| ------- | ------------------- | ------------------------------------------- |
-| GeoJSON | <code>Object</code> | GeoJSON FeatureCollection to convert to WKT |
+▸ **convertFeatureCollection**(`featureCollection`: FeatureCollection): _string_
+
+Converts a GeoJSON FeatureCollection to WKT GeometryCollection
+
+**`export`**
+
+#### Parameters:
+
+| Name                | Type              | Description                             |
+| :------------------ | :---------------- | :-------------------------------------- |
+| `featureCollection` | FeatureCollection | The FeatureCollection to convert to WKT |
+
+**Returns:** _string_
+
+The GeoJSON converted to well known representation
+
+Defined in: index.ts:38
+
+---
+
+### convertFeatureToWK
+
+▸ **convertFeatureToWK**(`geojson`: Feature, `type?`: [_WKType_](#wktype)): _string_ \| Buffer
+
+Converts GeoJSON Feature to WKT or WKB
+
+**`export`**
+
+#### Parameters:
+
+| Name      | Type                | Default value | Description               |
+| :-------- | :------------------ | :------------ | :------------------------ |
+| `geojson` | Feature             | -             | Feature object to convert |
+| `type`    | [_WKType_](#wktype) | 'wkt'         | -                         |
+
+**Returns:** _string_ \| Buffer
+
+The GeoJSON converted to well known representation
+
+Defined in: index.ts:28
+
+---
+
+### convertGeometryToWK
+
+▸ **convertGeometryToWK**(`geojson`: Geometry, `type?`: [_WKType_](#wktype)): _string_ \| Buffer
+
+Converts GeoJSON Geometry to WKT or WKB
+
+**`export`**
+
+#### Parameters:
+
+| Name      | Type                | Default value | Description                |
+| :-------- | :------------------ | :------------ | :------------------------- |
+| `geojson` | Geometry            | -             | Geometry object to convert |
+| `type`    | [_WKType_](#wktype) | 'wkt'         | -                          |
+
+**Returns:** _string_ \| Buffer
+
+The GeoJSON converted to well known representation
+
+Defined in: index.ts:14
+
+---
+
+### convertToWK
+
+▸ **convertToWK**(`geojson`: GeoJSON, `type?`: [_WKType_](#wktype)): _string_ \| Buffer
+
+Shorthand to convert GeoJSON Features, Geometries or FeatureCollections to WKT or WKB
+
+**`export`**
+
+#### Parameters:
+
+| Name      | Type                | Default value | Description            |
+| :-------- | :------------------ | :------------ | :--------------------- |
+| `geojson` | GeoJSON             | -             | The GeoJSON to convert |
+| `type`    | [_WKType_](#wktype) | 'wkt'         | -                      |
+
+**Returns:** _string_ \| Buffer
+
+The GeoJSON as WKT or WKB
+
+Defined in: index.ts:56
+
+---
+
+### parseFromWK
+
+▸ **parseFromWK**(`item`: _string_ \| Buffer, `asFeature?`: _boolean_, `properties?`: GeoJsonProperties): Feature \| Geometry
+
+Parse a WKT or WKB into a GeoJSON Feature or Geometry
+
+**`export`**
+
+#### Parameters:
+
+| Name         | Type               | Default value | Description                  |
+| :----------- | :----------------- | :------------ | :--------------------------- |
+| `item`       | _string_ \| Buffer | -             | The WK to convert to GeoJSON |
+| `asFeature`  | _boolean_          | false         | -                            |
+| `properties` | GeoJsonProperties  | -             | -                            |
+
+**Returns:** Feature \| Geometry
+
+The WK as GeoJSON
+
+Defined in: index.ts:76
