@@ -1,32 +1,28 @@
-import {GeoJSON, GeoJsonProperties, Feature, Geometry, FeatureCollection} from 'geojson';
-import wkx from 'wkx';
-
-export type WKType = 'wkt' | 'wkb';
+import {
+  GeoJSON, GeoJsonProperties, Feature, Geometry, FeatureCollection,
+} from 'geojson';
+import { GeoJSONGeometry, parse, stringify } from 'wellknown';
 
 /**
- * Converts GeoJSON Geometry to WKT or WKB
+ * Converts GeoJSON Geometry to WKT
  *
  * @export
  * @param  {Geometry} geojson Geometry object to convert
- * @param  {WKType} [type='wkt'] Type of WK to convert to
- * @return {(string | Buffer)} The GeoJSON converted to well known representation
+ * @return {string} The GeoJSON converted to well known text representation
  */
-export function convertGeometryToWK(geojson: Geometry, type: WKType = 'wkt'): string | Buffer {
-  const parsed = wkx.Geometry.parseGeoJSON(geojson);
-
-  return type === 'wkt' ? parsed.toWkt() : parsed.toWkb();
+export function convertGeometryToWK(geojson: Geometry): string {
+  return stringify(geojson as GeoJSONGeometry);
 }
 
 /**
- * Converts GeoJSON Feature to WKT or WKB
+ * Converts GeoJSON Feature to WKT
  *
  * @export
  * @param  {Feature} geojson Feature object to convert
- * @param  {WKType} [type='wkt'] Type of WK to convert to
- * @return {(string | Buffer) } The GeoJSON converted to well known representation
+ * @return {string} The GeoJSON converted to well known text representation
  */
-export function convertFeatureToWK(geojson: Feature, type: WKType = 'wkt'): string | Buffer {
-  return convertGeometryToWK(geojson.geometry, type);
+export function convertFeatureToWK(geojson: Feature): string {
+  return convertGeometryToWK(geojson.geometry);
 }
 
 /**
@@ -41,7 +37,7 @@ export function convertFeatureCollection(featureCollection: FeatureCollection): 
   }
 
   return `GEOMETRYCOLLECTION(${featureCollection.features
-    .map((d) => convertFeatureToWK(d, 'wkt'))
+    .map((d) => convertFeatureToWK(d))
     .join(',')})`;
 }
 
@@ -50,17 +46,16 @@ export function convertFeatureCollection(featureCollection: FeatureCollection): 
  *
  * @export
  * @param  {GeoJSON} geojson The GeoJSON to convert
- * @param  {WKType} [type='wkt'] Type of WK to convert to
- * @return {(string | Buffer)} The GeoJSON as WKT or WKB
+ * @return {string} The GeoJSON as WKT
  */
-export function convertToWK(geojson: GeoJSON, type: WKType = 'wkt'): string | Buffer {
+export function convertToWK(geojson: GeoJSON): string {
   switch (geojson.type) {
     case 'Feature':
-      return convertFeatureToWK(geojson, type);
+      return convertFeatureToWK(geojson);
     case 'FeatureCollection':
       return convertFeatureCollection(geojson);
     default:
-      return convertGeometryToWK(geojson, type);
+      return convertGeometryToWK(geojson);
   }
 }
 
@@ -68,23 +63,25 @@ export function convertToWK(geojson: GeoJSON, type: WKType = 'wkt'): string | Bu
  * Parse a WKT or WKB into a GeoJSON Feature or Geometry
  *
  * @export
- * @param  {(string | Buffer)} item The WK to convert to GeoJSON
+ * @param  {string} item The WKT to convert to GeoJSON
  * @param  {boolean} [asFeature=false] Wrap the converted geometry into a Feature
  * @param  {GeoJsonProperties} [properties={}] Metadata to embed the Feature with
- * @return {(Feature | Geometry)} The WK as GeoJSON
+ * @return {(Feature | Geometry)} The WKT as GeoJSON
  */
-export function parseFromWK(item: string | Buffer, asFeature = false, properties: GeoJsonProperties = {}): Feature | Geometry {
-  const parsed = wkx.Geometry.parse(item).toGeoJSON() as Geometry;
+export function parseFromWK(
+  item: string,
+  asFeature = false,
+  properties: GeoJsonProperties = {},
+): Feature | Geometry {
+  const parsed = parse(item) as Geometry;
 
-  if (asFeature === true) {
+  if (asFeature) {
     return {
       type: 'Feature',
       geometry: parsed,
       properties,
     };
-  } else {
-    return parsed;
   }
+
+  return parsed;
 }
-
-
