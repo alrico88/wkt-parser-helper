@@ -1,4 +1,5 @@
-import {Feature, FeatureCollection} from 'geojson';
+import { test, expect} from 'vitest';
+import { Feature, FeatureCollection } from 'geojson';
 import {convertFeatureCollection, convertToWK, parseFromWK} from '../src';
 
 const testFeature: Feature = {
