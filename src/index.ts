@@ -75,7 +75,7 @@ export function convertToWK(geojson: GeoJSON): string {
  * @returns {(P & { wkt: string })[]} An array of objects where each object contains a `wkt` string
  * representing the geometry and all the properties from the original GeoJSON feature
  */
-export function convertGeoJSONFeatureCollectionToWktCollection<P>(
+export function convertFeatureCollectionToWktCollection<P>(
   geojson: FeatureCollection<Geometry, P>,
 ): (P & { wkt: string })[] {
   return geojson.features.map((d) => ({

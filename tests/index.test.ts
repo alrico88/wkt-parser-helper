@@ -2,7 +2,7 @@ import { test, expect } from 'vitest';
 import { Feature, FeatureCollection } from 'geojson';
 import {
   convertFeatureCollection,
-  convertGeoJSONFeatureCollectionToWktCollection,
+  convertFeatureCollectionToWktCollection,
   convertToWK,
   parseFromWK,
 } from '../src';
@@ -111,7 +111,7 @@ test('Should convert GeoJSON FeatureCollection to an array of objects with WKT a
     },
   ];
 
-  expect(convertGeoJSONFeatureCollectionToWktCollection(geojson)).toEqual(
+  expect(convertFeatureCollectionToWktCollection(geojson)).toEqual(
     expected
   );
 });

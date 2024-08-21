@@ -60,7 +60,7 @@ From v4.0.0 onwards, support for converting GeoJSON to WKB is dropped.
 - [convertFeatureCollection](#convertfeaturecollection)
 - [convertFeatureToWK](#convertfeaturetowk)
 - [convertGeometryToWK](#convertgeometrytowk)
-- [convertGeoJSONFeatureCollectionToWktCollection](#convertGeoJSONFeatureCollectionToWktCollection)
+- [convertFeatureCollectionToWktCollection](#convertFeatureCollectionToWktCollection)
 - [convertToWK](#converttowk)
 - [parseFromWK](#parsefromwk)
 
@@ -126,9 +126,9 @@ The GeoJSON converted to well known text representation
 
 ---
 
-### convertGeoJSONFeatureCollectionToWktCollection
+### convertFeatureCollectionToWktCollection
 
-▸ **convertGeoJSONFeatureCollectionToWktCollection**<P\>(`geojson`: _FeatureCollection_<Geometry, P\>): P & { `wkt`: _string_ }[]
+▸ **convertFeatureCollectionToWktCollection**<P\>(`geojson`: _FeatureCollection_<Geometry, P\>): P & { `wkt`: _string_ }[]
 
 Converts a GeoJSON FeatureCollection into an array of objects where each object
 contains a WKT (Well-Known Text) string representing the geometry and the properties
