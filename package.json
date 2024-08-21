@@ -53,6 +53,7 @@
     "eslint-config-airbnb-typescript": "^14.0.1",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.25.1",
+    "tslib": "^2.6.3",
     "tsup": "^6.2.1",
     "typedoc": "^0.20.30",
     "typedoc-plugin-markdown": "^3.6.0",

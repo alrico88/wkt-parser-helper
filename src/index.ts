@@ -1,5 +1,9 @@
 import {
-  GeoJSON, GeoJsonProperties, Feature, Geometry, FeatureCollection,
+  GeoJSON,
+  GeoJsonProperties,
+  Feature,
+  Geometry,
+  FeatureCollection,
 } from 'geojson';
 import { GeoJSONGeometry, parse, stringify } from 'wellknown';
 
@@ -31,7 +35,9 @@ export function convertFeatureToWK(geojson: Feature): string {
  * @param  {FeatureCollection} featureCollection The FeatureCollection to convert to WKT
  * @return {string} The GeoJSON converted to well known representation
  */
-export function convertFeatureCollection(featureCollection: FeatureCollection): string {
+export function convertFeatureCollection(
+  featureCollection: FeatureCollection,
+): string {
   if (featureCollection.type !== 'FeatureCollection') {
     throw new Error('GeoJSON is not a FeatureCollection');
   }
@@ -57,6 +63,25 @@ export function convertToWK(geojson: GeoJSON): string {
     default:
       return convertGeometryToWK(geojson);
   }
+}
+
+/**
+ * Converts a GeoJSON FeatureCollection into an array of objects where each object
+ * contains a WKT string representing the geometry and the properties
+ * from the original GeoJSON feature
+ *
+ * @template P The type of properties in the GeoJSON features
+ * @param {FeatureCollection<Geometry, P>} geojson The GeoJSON FeatureCollection to be converted
+ * @returns {(P & { wkt: string })[]} An array of objects where each object contains a `wkt` string
+ * representing the geometry and all the properties from the original GeoJSON feature
+ */
+export function convertGeoJSONFeatureCollectionToWktCollection<P>(
+  geojson: FeatureCollection<Geometry, P>,
+): (P & { wkt: string })[] {
+  return geojson.features.map((d) => ({
+    wkt: convertGeometryToWK(d.geometry),
+    ...d.properties,
+  }));
 }
 
 /**
