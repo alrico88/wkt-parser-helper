@@ -60,6 +60,7 @@ From v4.0.0 onwards, support for converting GeoJSON to WKB is dropped.
 - [convertFeatureCollection](#convertfeaturecollection)
 - [convertFeatureToWK](#convertfeaturetowk)
 - [convertGeometryToWK](#convertgeometrytowk)
+- [convertFeatureCollectionToWktCollection](#convertFeatureCollectionToWktCollection)
 - [convertToWK](#converttowk)
 - [parseFromWK](#parsefromwk)
 
@@ -83,8 +84,6 @@ Converts a GeoJSON FeatureCollection to WKT GeometryCollection
 
 The GeoJSON converted to well known representation
 
-Defined in: [index.ts:34](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L34)
-
 ---
 
 ### convertFeatureToWK
@@ -104,8 +103,6 @@ Converts GeoJSON Feature to WKT
 **Returns:** _string_
 
 The GeoJSON converted to well known text representation
-
-Defined in: [index.ts:24](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L24)
 
 ---
 
@@ -127,7 +124,32 @@ Converts GeoJSON Geometry to WKT
 
 The GeoJSON converted to well known text representation
 
-Defined in: [index.ts:13](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L13)
+---
+
+### convertFeatureCollectionToWktCollection
+
+▸ **convertFeatureCollectionToWktCollection**<P\>(`geojson`: _FeatureCollection_<Geometry, P\>): P & { `wkt`: _string_ }[]
+
+Converts a GeoJSON FeatureCollection into an array of objects where each object
+contains a WKT (Well-Known Text) string representing the geometry and the properties
+from the original GeoJSON feature
+
+#### Type parameters:
+
+| Name | Description                                    |
+| :--- | :--------------------------------------------- |
+| `P`  | The type of properties in the GeoJSON features |
+
+#### Parameters:
+
+| Name      | Type                              | Description                                   |
+| :-------- | :-------------------------------- | :-------------------------------------------- |
+| `geojson` | _FeatureCollection_<Geometry, P\> | The GeoJSON FeatureCollection to be converted |
+
+**Returns:** P & { `wkt`: _string_ }[]
+
+)[]} An array of objects where each object contains a `wkt` string
+representing the geometry and all the properties from the original GeoJSON feature
 
 ---
 
@@ -148,8 +170,6 @@ Shorthand to convert GeoJSON Features, Geometries or FeatureCollections to WKT o
 **Returns:** _string_
 
 The GeoJSON as WKT
-
-Defined in: [index.ts:51](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L51)
 
 ---
 
@@ -172,5 +192,3 @@ Parse a WKT or WKB into a GeoJSON Feature or Geometry
 **Returns:** Feature \| Geometry
 
 The WKT as GeoJSON
-
-Defined in: [index.ts:71](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L71)
