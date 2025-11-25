@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       betterknown:
-        specifier: ^1.0.4
-        version: 1.0.4
+        specifier: ^1.1.1
+        version: 1.1.1
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.4
@@ -648,8 +648,8 @@ packages:
   bcrypt-pbkdf@1.0.2:
     resolution: {integrity: sha512-qeFIXtP4MSoi6NLqO12WfqARWWuCKi2Rn/9hJLEmtB5yTNr9DqFWkJRCf2qShWzPeAMRnOgCrq0sg/KLv5ES9w==}
 
-  betterknown@1.0.4:
-    resolution: {integrity: sha512-SgLmsjeYq9bMUufqoGTPf1iuQMKmUSR1H0Hc8S6t/FYP+ZtIkaQ4ObtUHdFRyr71DQe2fcQYyxayDVwdKOBJWA==}
+  betterknown@1.1.1:
+    resolution: {integrity: sha512-2O0q94eVhzdhCAaL0JuT7izWmB7RdZi9ajM2rJ5bEyfLGNya4a8esldHjWqT8zY7VXV8/0FoFFvBZbB6E7Z0QQ==}
 
   brace-expansion@2.0.1:
     resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
@@ -1785,7 +1785,7 @@ snapshots:
     dependencies:
       tweetnacl: 0.14.5
 
-  betterknown@1.0.4:
+  betterknown@1.1.1:
     dependencies:
       '@types/geojson': 7946.0.16
 
