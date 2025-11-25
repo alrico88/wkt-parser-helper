@@ -55,6 +55,7 @@
     "trailingComma": "es5"
   },
   "dependencies": {
-    "betterknown": "^1.1.1"
+    "betterknown": "^1.1.1",
+    "klona": "^2.0.6"
   }
 }

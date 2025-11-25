@@ -4,6 +4,8 @@ import {
   convertFeatureCollection,
   convertFeatureCollectionToWktCollection,
   convertToWK,
+  convertWkTo2DWk,
+  convertZGeojsonTo2D,
   parseFromWK,
 } from '../src';
 
@@ -135,4 +137,15 @@ test('Support for converting and decoding shapes with Z coordinates', () => {
   expect(() => {
     return parseFromWK(convertToWK(testFeatureWithZ));
   }).not.toThrow();
+});
+
+test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 2D', () => {
+  expect(() => {
+    return convertZGeojsonTo2D(testFeatureWithZ);
+  });
+});
+test('Support for converting and decoding shapes with Z coordinates to 2D WKT', () => {
+  expect(() => {
+    return convertWkTo2DWk(convertToWK(testFeatureWithZ));
+  });
 });

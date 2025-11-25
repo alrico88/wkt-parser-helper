@@ -8,6 +8,7 @@ import type {
   Position,
 } from 'geojson';
 import { geoJSONToWkt, wktToGeoJSON } from 'betterknown';
+import { klona } from 'klona/json';
 
 type Coordinates = Position | Position[] | Position[][] | Position[][][];
 
@@ -122,7 +123,9 @@ export function parseFromWK(
  * @param  {GeoJSON} geojson The WKT to convert to GeoJSON
  * @return {GeoJSON} The WKT as 2D GeoJSON
  */
-function parseWkToGeojson2D(geojson: GeoJSON): GeoJSON {
+export function convertZGeojsonTo2D(geojson: GeoJSON): GeoJSON {
+  const newGeoJSON = klona(geojson);
+
   function stripCoords(coords: Coordinates): Coordinates {
     if (typeof coords[0] === 'number') {
       return coords.slice(0, 2) as unknown as Coordinates;
@@ -157,7 +160,24 @@ function parseWkToGeojson2D(geojson: GeoJSON): GeoJSON {
     return geom;
   }
 
-  return processGeometry(geojson) as GeoJSON;
+  function processFeature(feature: Feature): Feature {
+    if (feature.geometry) {
+      feature.geometry = processGeometry(feature.geometry) as Geometry;
+    }
+    return feature;
+  }
+
+  if (newGeoJSON.type === 'Feature') {
+    return processFeature(newGeoJSON as Feature);
+  } else if (newGeoJSON.type === 'FeatureCollection') {
+    const fc = newGeoJSON as FeatureCollection;
+
+    fc.features = fc.features.map(processFeature);
+
+    return fc;
+  } else {
+    return processGeometry(newGeoJSON) as GeoJSON;
+  }
 }
 
 /**
@@ -170,5 +190,5 @@ function parseWkToGeojson2D(geojson: GeoJSON): GeoJSON {
 export function convertWkTo2DWk(wkt: string): string {
   const geojson = parseFromWK(wkt);
 
-  return convertToWK(parseWkToGeojson2D(geojson));
+  return convertToWK(convertZGeojsonTo2D(geojson));
 }
