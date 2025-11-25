@@ -1,0 +1,15 @@
+{
+  "plugin": ["typedoc-plugin-markdown"],
+  "theme": "markdown",
+  "out": "./docs/README.md",
+  "router": "module",
+  "readme": "none",
+  "gitRevision": "master",
+  "parametersFormat": "table",
+  "interfacePropertiesFormat": "table",
+  "typeAliasPropertiesFormat": "table",
+  "propertyMembersFormat": "table",
+  "typeDeclarationFormat": "table",
+  "useCodeBlocks": true,
+  "expandParameters": true
+}
