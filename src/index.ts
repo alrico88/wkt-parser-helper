@@ -1,13 +1,13 @@
 import type {
-    Feature,
-    FeatureCollection,
-    GeoJSON,
-    GeoJsonProperties,
-    Geometry,
-    GeometryCollection,
-    Position
+  Feature,
+  FeatureCollection,
+  GeoJSON,
+  GeoJsonProperties,
+  Geometry,
+  GeometryCollection,
+  Position,
 } from 'geojson';
-import {geoJSONToWkt, wktToGeoJSON} from 'betterknown';
+import { geoJSONToWkt, wktToGeoJSON } from 'betterknown';
 
 type Coordinates = Position | Position[] | Position[][] | Position[][][];
 
@@ -19,7 +19,7 @@ type Coordinates = Position | Position[] | Position[][] | Position[][][];
  * @return {string} The GeoJSON converted to well known text representation
  */
 export function convertGeometryToWK(geojson: Geometry): string {
-    return geoJSONToWkt(geojson);
+  return geoJSONToWkt(geojson);
 }
 
 /**
@@ -30,7 +30,7 @@ export function convertGeometryToWK(geojson: Geometry): string {
  * @return {string} The GeoJSON converted to well known text representation
  */
 export function convertFeatureToWK(geojson: Feature): string {
-    return convertGeometryToWK(geojson.geometry);
+  return convertGeometryToWK(geojson.geometry);
 }
 
 /**
@@ -40,15 +40,15 @@ export function convertFeatureToWK(geojson: Feature): string {
  * @return {string} The GeoJSON converted to well known representation
  */
 export function convertFeatureCollection(
-    featureCollection: FeatureCollection
+  featureCollection: FeatureCollection,
 ): string {
-    if (featureCollection.type !== 'FeatureCollection') {
-        throw new Error('GeoJSON is not a FeatureCollection');
-    }
+  if (featureCollection.type !== 'FeatureCollection') {
+    throw new Error('GeoJSON is not a FeatureCollection');
+  }
 
-    return `GEOMETRYCOLLECTION(${featureCollection.features
-        .map((d) => convertFeatureToWK(d))
-        .join(',')})`;
+  return `GEOMETRYCOLLECTION(${featureCollection.features
+    .map((d) => convertFeatureToWK(d))
+    .join(',')})`;
 }
 
 /**
@@ -59,14 +59,14 @@ export function convertFeatureCollection(
  * @return {string} The GeoJSON as WKT
  */
 export function convertToWK(geojson: GeoJSON): string {
-    switch (geojson.type) {
-        case 'Feature':
-            return convertFeatureToWK(geojson);
-        case 'FeatureCollection':
-            return convertFeatureCollection(geojson);
-        default:
-            return convertGeometryToWK(geojson);
-    }
+  switch (geojson.type) {
+    case 'Feature':
+      return convertFeatureToWK(geojson);
+    case 'FeatureCollection':
+      return convertFeatureCollection(geojson);
+    default:
+      return convertGeometryToWK(geojson);
+  }
 }
 
 /**
@@ -80,12 +80,12 @@ export function convertToWK(geojson: GeoJSON): string {
  * representing the geometry and all the properties from the original GeoJSON feature
  */
 export function convertFeatureCollectionToWktCollection<P>(
-    geojson: FeatureCollection<Geometry, P>
+  geojson: FeatureCollection<Geometry, P>,
 ): (P & { wkt: string })[] {
-    return geojson.features.map((d) => ({
-        wkt: convertGeometryToWK(d.geometry),
-        ...d.properties,
-    }));
+  return geojson.features.map((d) => ({
+    wkt: convertGeometryToWK(d.geometry),
+    ...d.properties,
+  }));
 }
 
 /**
@@ -98,21 +98,21 @@ export function convertFeatureCollectionToWktCollection<P>(
  * @return {(Feature | Geometry)} The WKT as GeoJSON
  */
 export function parseFromWK(
-    item: string,
-    asFeature = false,
-    properties: GeoJsonProperties = {}
+  item: string,
+  asFeature = false,
+  properties: GeoJsonProperties = {},
 ): Feature | Geometry {
-    const parsed = wktToGeoJSON(item) as Geometry;
+  const parsed = wktToGeoJSON(item) as Geometry;
 
-    if (asFeature) {
-        return {
-            type: 'Feature',
-            geometry: parsed,
-            properties,
-        };
-    }
+  if (asFeature) {
+    return {
+      type: 'Feature',
+      geometry: parsed,
+      properties,
+    };
+  }
 
-    return parsed;
+  return parsed;
 }
 
 /**
@@ -122,42 +122,42 @@ export function parseFromWK(
  * @param  {GeoJSON} geojson The WKT to convert to GeoJSON
  * @return {GeoJSON} The WKT as 2D GeoJSON
  */
-function parseWkToGeojson2D(geojson: GeoJSON):GeoJSON {
-    function stripCoords(coords: Coordinates): Coordinates {
-        if (typeof coords[0] === 'number') {
-            return coords.slice(0, 2) as unknown as Coordinates;
-        }
-
-        return (coords as Position[]).map(stripCoords) as unknown as Coordinates;
+function parseWkToGeojson2D(geojson: GeoJSON): GeoJSON {
+  function stripCoords(coords: Coordinates): Coordinates {
+    if (typeof coords[0] === 'number') {
+      return coords.slice(0, 2) as unknown as Coordinates;
     }
 
-    function processGeometry(geom: GeoJSON | GeometryCollection): GeoJSON | null {
-        if (geom == null) return null;
+    return (coords as Position[]).map(stripCoords) as unknown as Coordinates;
+  }
 
-        const type = geom.type;
+  function processGeometry(geom: GeoJSON | GeometryCollection): GeoJSON | null {
+    if (geom == null) return null;
 
-        switch (type) {
-            case 'Point':
-            case 'MultiPoint':
-            case 'LineString':
-            case 'MultiLineString':
-            case 'Polygon':
-            case 'MultiPolygon':
-                geom.coordinates = stripCoords(geom.coordinates);
+    const type = geom.type;
 
-                break;
-            case 'GeometryCollection':
-                geom.geometries = geom.geometries.map(processGeometry) as Geometry[];
+    switch (type) {
+      case 'Point':
+      case 'MultiPoint':
+      case 'LineString':
+      case 'MultiLineString':
+      case 'Polygon':
+      case 'MultiPolygon':
+        geom.coordinates = stripCoords(geom.coordinates);
 
-                break;
-            default:
-                throw new Error(`geometry type not supported: ${type}`);
-        }
+        break;
+      case 'GeometryCollection':
+        geom.geometries = geom.geometries.map(processGeometry) as Geometry[];
 
-        return geom;
+        break;
+      default:
+        throw new Error(`geometry type not supported: ${type}`);
     }
 
-    return processGeometry(geojson) as GeoJSON;
+    return geom;
+  }
+
+  return processGeometry(geojson) as GeoJSON;
 }
 
 /**
@@ -168,7 +168,7 @@ function parseWkToGeojson2D(geojson: GeoJSON):GeoJSON {
  * @return {GeoJSON} The Z WKT as 2D WKT
  */
 export function convertWkTo2DWk(wkt: string): string {
-    const geojson = parseFromWK(wkt);
+  const geojson = parseFromWK(wkt);
 
-    return convertToWK(parseWkToGeojson2D(geojson))
+  return convertToWK(parseWkToGeojson2D(geojson));
 }

@@ -72,13 +72,13 @@ test('Same WKT should always return same Feature, with desired properties embedd
   expect(
     parseFromWK(testFeatureAsWkt, true, {
       test: 'Test',
-    })
+    }),
   ).toStrictEqual(testFeatureWithProperties);
 });
 
 test('Same GeoJSON FeatureCollection should always return same wkt GEOMETRYCOLLECTION', () => {
   expect(convertFeatureCollection(testFeatureCollection)).toBe(
-    testFeatureCollectionAsWkt
+    testFeatureCollectionAsWkt,
   );
 });
 
