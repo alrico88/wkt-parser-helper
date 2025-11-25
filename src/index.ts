@@ -1,11 +1,13 @@
 import type {
+    Feature,
+    FeatureCollection,
     GeoJSON,
     GeoJsonProperties,
-    Feature,
     Geometry,
-    FeatureCollection, GeometryCollection, Position
+    GeometryCollection,
+    Position
 } from 'geojson';
-import {wktToGeoJSON, geoJSONToWkt} from 'betterknown';
+import {geoJSONToWkt, wktToGeoJSON} from 'betterknown';
 
 type Coordinates = Position | Position[] | Position[][] | Position[][][];
 
