@@ -1,5 +1,10 @@
 import { test, expect } from 'vitest';
-import type { Feature, FeatureCollection, Polygon } from 'geojson';
+import type {
+  Feature,
+  FeatureCollection,
+  GeometryCollection,
+  Polygon,
+} from 'geojson';
 import {
   convertFeatureCollection,
   convertFeatureCollectionToWktCollection,
@@ -38,6 +43,21 @@ const testPolygonWithZ: Polygon = {
     ],
   ],
 };
+
+const testFeatureWithZ: Feature = {
+  type: 'Feature',
+  geometry: testPolygonWithZ,
+  properties: {},
+};
+const testFeatureCollectionWithZ: FeatureCollection = {
+  type: 'FeatureCollection',
+  features: [testFeatureWithZ],
+};
+const testGeometryCollectionWithZ: GeometryCollection = {
+  type: 'GeometryCollection',
+  geometries: [testPolygonWithZ],
+};
+
 const testFeatureWithProperties = Object.assign(testFeature, {
   properties: {
     test: 'Test',
@@ -134,17 +154,46 @@ test('Support for converting and decoding shapes with Z coordinates', () => {
   }).not.toThrow();
 });
 
-test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 2D', () => {
+test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 2D -- POLYGON', () => {
   const item = convertZGeojsonTo2D(testPolygonWithZ) as Polygon;
 
   expect(item.coordinates[0][0].length).toEqual(2);
   expect(item).not.toEqual(parseFromWK(convertToWK(testPolygonWithZ)));
 });
 
-test('Support for converting and decoding shapes with Z coordinates to 2D WKT', () => {
+test('Support for converting and decoding shapes with Z coordinates to 2D WKT -- POLYGON', () => {
   const json = parseFromWK(
     convertWkTo2DWk(convertToWK(testPolygonWithZ)),
   ) as Polygon;
 
   expect(json.coordinates[0][0].length).toEqual(2);
+});
+
+test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 2D -- FEATURE', () => {
+  const item = convertZGeojsonTo2D(testFeatureWithZ) as Feature<Polygon>;
+
+  expect(item.geometry.coordinates[0][0].length).toEqual(2);
+  expect(item).not.toEqual(parseFromWK(convertToWK(testFeatureWithZ)));
+});
+
+test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 2D -- FEATURE COLLECTION', () => {
+  const item = convertZGeojsonTo2D(
+    testFeatureCollectionWithZ,
+  ) as FeatureCollection<Polygon>;
+
+  expect(item.features[0].geometry.coordinates[0][0].length).toEqual(2);
+  expect(item).not.toEqual(
+    parseFromWK(convertToWK(testFeatureCollectionWithZ)),
+  );
+});
+
+test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 2D -- GEOMETRY COLLECTION', () => {
+  const item = convertZGeojsonTo2D(
+    testGeometryCollectionWithZ,
+  ) as GeometryCollection<Polygon>;
+
+  expect(item.geometries[0].coordinates[0][0].length).toEqual(2);
+  expect(item).not.toEqual(
+    parseFromWK(convertToWK(testGeometryCollectionWithZ)),
+  );
 });
