@@ -24,6 +24,23 @@ const testFeature: Feature = {
   },
 };
 
+const testFeatureWithZ: Feature = {
+  type: 'Feature',
+  properties: {},
+  geometry: {
+    type: 'Polygon',
+    coordinates: [
+      [
+        [-3.706512451171875, 40.420074462890625, 0],
+        [-3.70513916015625, 40.420074462890625, 0],
+        [-3.70513916015625, 40.42144775390625, 0],
+        [-3.706512451171875, 40.42144775390625, 0],
+        [-3.706512451171875, 40.420074462890625, 0],
+      ],
+    ],
+  },
+};
+
 const testFeatureWithProperties = Object.assign(testFeature, {
   properties: {
     test: 'Test',
@@ -112,4 +129,10 @@ test('Should convert GeoJSON FeatureCollection to an array of objects with WKT a
   ];
 
   expect(convertFeatureCollectionToWktCollection(geojson)).toEqual(expected);
+});
+
+test('Support for converting and decoding shapes with Z coordinates', () => {
+  expect(() => {
+    return parseFromWK(convertToWK(testFeatureWithZ));
+  }).not.toThrow();
 });

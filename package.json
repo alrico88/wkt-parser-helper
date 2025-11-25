@@ -57,6 +57,6 @@
     "trailingComma": "es5"
   },
   "dependencies": {
-    "betterknown": "^1.0.4"
+    "betterknown": "^1.1.1"
   }
 }
