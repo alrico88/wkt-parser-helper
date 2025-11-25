@@ -41,7 +41,7 @@ export function convertFeatureToWK(geojson: Feature): string {
  * @return {string} The GeoJSON converted to well known representation
  */
 export function convertFeatureCollection(
-  featureCollection: FeatureCollection,
+  featureCollection: FeatureCollection
 ): string {
   if (featureCollection.type !== 'FeatureCollection') {
     throw new Error('GeoJSON is not a FeatureCollection');
@@ -53,7 +53,7 @@ export function convertFeatureCollection(
 }
 
 /**
- * Shorthand to convert GeoJSON Features, Geometries or FeatureCollections to WKT or WKB
+ * Shorthand to convert GeoJSON Features, Geometries or FeatureCollections to WKT
  *
  * @export
  * @param  {GeoJSON} geojson The GeoJSON to convert
@@ -81,7 +81,7 @@ export function convertToWK(geojson: GeoJSON): string {
  * representing the geometry and all the properties from the original GeoJSON feature
  */
 export function convertFeatureCollectionToWktCollection<P>(
-  geojson: FeatureCollection<Geometry, P>,
+  geojson: FeatureCollection<Geometry, P>
 ): (P & { wkt: string })[] {
   return geojson.features.map((d) => ({
     wkt: convertGeometryToWK(d.geometry),
@@ -90,7 +90,7 @@ export function convertFeatureCollectionToWktCollection<P>(
 }
 
 /**
- * Parse a WKT or WKB into a GeoJSON Feature or Geometry
+ * Parse a WKT into a GeoJSON Feature or Geometry
  *
  * @export
  * @param  {string} item The WKT to convert to GeoJSON
@@ -101,7 +101,7 @@ export function convertFeatureCollectionToWktCollection<P>(
 export function parseFromWK(
   item: string,
   asFeature = false,
-  properties: GeoJsonProperties = {},
+  properties: GeoJsonProperties = {}
 ): Feature | Geometry {
   const parsed = wktToGeoJSON(item) as Geometry;
 
@@ -117,7 +117,7 @@ export function parseFromWK(
 }
 
 /**
- * Parse a Z WKT or WKB into a 2D GeoJSON Feature or Geometry
+ * Parse a Z WKT into a 2D GeoJSON Feature or Geometry
  *
  * @export
  * @param  {GeoJSON} geojson The WKT to convert to GeoJSON
@@ -181,7 +181,7 @@ export function convertZGeojsonTo2D(geojson: GeoJSON): GeoJSON {
 }
 
 /**
- * Parse a Z WKT or WKB into a 2D WKT
+ * Parse a Z WKT into a 2D WKT
  *
  * @export
  * @param  {string} wkt The Z WKT to convert to 2D WKT
