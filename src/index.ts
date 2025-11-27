@@ -41,15 +41,17 @@ export function convertFeatureToWK(geojson: Feature): string {
  * @return {string} The GeoJSON converted to well known representation
  */
 export function convertFeatureCollection(
-  featureCollection: FeatureCollection
+  featureCollection: FeatureCollection,
 ): string {
   if (featureCollection.type !== 'FeatureCollection') {
     throw new Error('GeoJSON is not a FeatureCollection');
   }
 
-  return `GEOMETRYCOLLECTION(${featureCollection.features
-    .map((d) => convertFeatureToWK(d))
-    .join(',')})`;
+  return featureCollection.features.length === 0
+    ? 'GEOMETRYCOLLECTION EMPTY'
+    : `GEOMETRYCOLLECTION(${featureCollection.features
+        .map((d) => convertFeatureToWK(d))
+        .join(',')})`;
 }
 
 /**
@@ -81,7 +83,7 @@ export function convertToWK(geojson: GeoJSON): string {
  * representing the geometry and all the properties from the original GeoJSON feature
  */
 export function convertFeatureCollectionToWktCollection<P>(
-  geojson: FeatureCollection<Geometry, P>
+  geojson: FeatureCollection<Geometry, P>,
 ): (P & { wkt: string })[] {
   return geojson.features.map((d) => ({
     wkt: convertGeometryToWK(d.geometry),
@@ -101,14 +103,14 @@ export function convertFeatureCollectionToWktCollection<P>(
 export function parseFromWK(
   item: string,
   asFeature = false,
-  properties: GeoJsonProperties = {}
+  properties: GeoJsonProperties = {},
 ): Feature | Geometry {
   const parsed = wktToGeoJSON(item) as Geometry;
 
   if (asFeature) {
     return {
       type: 'Feature',
-      geometry: parsed,
+      geometry: { parsed },
       properties,
     };
   }

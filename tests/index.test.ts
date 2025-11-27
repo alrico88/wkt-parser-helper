@@ -197,3 +197,9 @@ test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 
     parseFromWK(convertToWK(testGeometryCollectionWithZ)),
   );
 });
+
+test('Support for empty shapes', () => {
+  expect(
+    convertFeatureCollection({ type: 'FeatureCollection', features: [] }),
+  ).toEqual('GEOMETRYCOLLECTION EMPTY');
+});
