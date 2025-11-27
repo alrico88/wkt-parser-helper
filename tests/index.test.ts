@@ -136,3 +136,7 @@ test('Support for converting and decoding shapes with Z coordinates', () => {
     return parseFromWK(convertToWK(testFeatureWithZ));
   }).not.toThrow();
 });
+
+test('Support for empty shapes', () => {
+  expect(convertFeatureCollection({type: "FeatureCollection", features: []})).toEqual('GEOMETRYCOLLECTION EMPTY');
+});
