@@ -110,7 +110,7 @@ export function parseFromWK(
   if (asFeature) {
     return {
       type: 'Feature',
-      geometry: { parsed },
+      geometry: parsed,
       properties,
     };
   }
