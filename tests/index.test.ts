@@ -199,5 +199,7 @@ test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 
 });
 
 test('Support for empty shapes', () => {
-    expect(convertFeatureCollection({type: "FeatureCollection", features: []})).toEqual('GEOMETRYCOLLECTION EMPTY');
+  expect(
+    convertFeatureCollection({ type: 'FeatureCollection', features: [] }),
+  ).toEqual('GEOMETRYCOLLECTION EMPTY');
 });

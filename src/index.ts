@@ -48,10 +48,10 @@ export function convertFeatureCollection(
   }
 
   return featureCollection.features.length === 0
-      ? 'GEOMETRYCOLLECTION EMPTY'
-      : `GEOMETRYCOLLECTION(${featureCollection.features
-    .map((d) => convertFeatureToWK(d))
-    .join(',')})`;
+    ? 'GEOMETRYCOLLECTION EMPTY'
+    : `GEOMETRYCOLLECTION(${featureCollection.features
+        .map((d) => convertFeatureToWK(d))
+        .join(',')})`;
 }
 
 /**
