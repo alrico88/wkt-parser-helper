@@ -6,12 +6,13 @@ import type {
   Polygon,
 } from 'geojson';
 import {
-  convertFeatureCollection,
-  convertFeatureCollectionToWktCollection,
-  convertToWK,
-  convertWkTo2DWk,
-  convertZGeojsonTo2D,
-  parseFromWK,
+  featureCollectionToWkt,
+  featureCollectionToWktList,
+  geojsonToWkt,
+  wkt3dTo2d,
+  geojson3dTo2d,
+  EMPTY_GEOMETRY_COLLECTION_WKT,
+  wktToGeojson,
 } from '../src';
 
 const testFeature: Feature = {
@@ -78,24 +79,24 @@ const testFeatureCollectionAsWkt =
 // TESTS
 
 test('Same GeoJSON should always return same WKT', () => {
-  expect(convertToWK(testFeature)).toBe(testFeatureAsWkt);
+  expect(geojsonToWkt(testFeature)).toBe(testFeatureAsWkt);
 });
 
 test('Same WKT should always return same Geometry', () => {
-  expect(parseFromWK(testFeatureAsWkt)).toStrictEqual(testFeature.geometry);
+  expect(wktToGeojson(testFeatureAsWkt)).toStrictEqual(testFeature.geometry);
 });
 
 test('Same WKT should always return same Feature, with desired properties embedded', () => {
   expect(
-    parseFromWK(testFeatureAsWkt, true, {
+    wktToGeojson(testFeatureAsWkt, true, {
       test: 'Test',
-    }),
+    })
   ).toStrictEqual(testFeatureWithProperties);
 });
 
 test('Same GeoJSON FeatureCollection should always return same wkt GEOMETRYCOLLECTION', () => {
-  expect(convertFeatureCollection(testFeatureCollection)).toBe(
-    testFeatureCollectionAsWkt,
+  expect(featureCollectionToWkt(testFeatureCollection)).toBe(
+    testFeatureCollectionAsWkt
   );
 });
 
@@ -145,61 +146,61 @@ test('Should convert GeoJSON FeatureCollection to an array of objects with WKT a
     },
   ];
 
-  expect(convertFeatureCollectionToWktCollection(geojson)).toEqual(expected);
+  expect(featureCollectionToWktList(geojson)).toEqual(expected);
 });
 
 test('Support for converting and decoding shapes with Z coordinates', () => {
   expect(() => {
-    return parseFromWK(convertToWK(testPolygonWithZ));
+    return wktToGeojson(geojsonToWkt(testPolygonWithZ));
   }).not.toThrow();
 });
 
 test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 2D -- POLYGON', () => {
-  const item = convertZGeojsonTo2D(testPolygonWithZ) as Polygon;
+  const item = geojson3dTo2d(testPolygonWithZ) as Polygon;
 
   expect(item.coordinates[0][0].length).toEqual(2);
-  expect(item).not.toEqual(parseFromWK(convertToWK(testPolygonWithZ)));
+  expect(item).not.toEqual(wktToGeojson(geojsonToWkt(testPolygonWithZ)));
 });
 
 test('Support for converting and decoding shapes with Z coordinates to 2D WKT -- POLYGON', () => {
-  const json = parseFromWK(
-    convertWkTo2DWk(convertToWK(testPolygonWithZ)),
+  const json = wktToGeojson(
+    wkt3dTo2d(geojsonToWkt(testPolygonWithZ))
   ) as Polygon;
 
   expect(json.coordinates[0][0].length).toEqual(2);
 });
 
 test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 2D -- FEATURE', () => {
-  const item = convertZGeojsonTo2D(testFeatureWithZ) as Feature<Polygon>;
+  const item = geojson3dTo2d(testFeatureWithZ) as Feature<Polygon>;
 
   expect(item.geometry.coordinates[0][0].length).toEqual(2);
-  expect(item).not.toEqual(parseFromWK(convertToWK(testFeatureWithZ)));
+  expect(item).not.toEqual(wktToGeojson(geojsonToWkt(testFeatureWithZ)));
 });
 
 test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 2D -- FEATURE COLLECTION', () => {
-  const item = convertZGeojsonTo2D(
-    testFeatureCollectionWithZ,
+  const item = geojson3dTo2d(
+    testFeatureCollectionWithZ
   ) as FeatureCollection<Polygon>;
 
   expect(item.features[0].geometry.coordinates[0][0].length).toEqual(2);
   expect(item).not.toEqual(
-    parseFromWK(convertToWK(testFeatureCollectionWithZ)),
+    wktToGeojson(geojsonToWkt(testFeatureCollectionWithZ))
   );
 });
 
 test('Support for converting and decoding GEOJSON with Z coordinates to GEOJSON 2D -- GEOMETRY COLLECTION', () => {
-  const item = convertZGeojsonTo2D(
-    testGeometryCollectionWithZ,
+  const item = geojson3dTo2d(
+    testGeometryCollectionWithZ
   ) as GeometryCollection<Polygon>;
 
   expect(item.geometries[0].coordinates[0][0].length).toEqual(2);
   expect(item).not.toEqual(
-    parseFromWK(convertToWK(testGeometryCollectionWithZ)),
+    wktToGeojson(geojsonToWkt(testGeometryCollectionWithZ))
   );
 });
 
 test('Support for empty shapes', () => {
   expect(
-    convertFeatureCollection({ type: 'FeatureCollection', features: [] }),
-  ).toEqual('GEOMETRYCOLLECTION EMPTY');
+    featureCollectionToWkt({ type: 'FeatureCollection', features: [] })
+  ).toEqual(EMPTY_GEOMETRY_COLLECTION_WKT);
 });

@@ -6,16 +6,16 @@ Convert and parse between Well-Known-Text (WKT) and GeoJSON
 
 Using npm `npm i wkt-parser-helper`
 
-Using yarn `yarn add wkt-parser-helper`
+Using pnpm `pnpm i wkt-parser-helper`
 
 ## Usage
 
 In CommonJS env
 
 ```javascript
-const { parseFromWK } = require('wkt-parser-helper');
+const { wktToGeojson } = require('wkt-parser-helper');
 
-const geojson = parseFromWK(
+const geojson = wktToGeojson(
   'POLYGON ((-3.706512451171875 40.420074462890625, -3.70513916015625 40.420074462890625, -3.70513916015625 40.42144775390625, -3.706512451171875 40.42144775390625, -3.706512451171875 40.420074462890625))'
 );
 
@@ -25,7 +25,7 @@ const geojson = parseFromWK(
 Using imports
 
 ```javascript
-import { convertToWK } from 'wkt-parser-helper';
+import { geojsonToWkt } from 'wkt-parser-helper';
 
 const myFeature: Feature = {
   type: 'Feature',
@@ -44,7 +44,7 @@ const myFeature: Feature = {
   },
 };
 
-const myFeatureAsWKT = convertToWK(myFeature);
+const myFeatureAsWKT = geojsonToWkt(myFeature);
 
 // myFeatureAsWKT is 'POLYGON ((-3.706512451171875 40.420074462890625, -3.70513916015625 40.420074462890625, -3.70513916015625 40.42144775390625, -3.706512451171875 40.42144775390625, -3.706512451171875 40.420074462890625))'
 ```
@@ -53,15 +53,39 @@ const myFeatureAsWKT = convertToWK(myFeature);
 
 From v4.0.0 onwards, support for converting GeoJSON to WKB is dropped.
 
-## Functions
+In v7.0.0, functions have been renamed:
 
-### convertFeatureCollection()
+| Previous name                             | New name                     |
+| ----------------------------------------- | ---------------------------- |
+| `convertGeometryToWK`                     | `geometryToWkt`              |
+| `convertFeatureToWK`                      | `featureToWkt`               |
+| `convertFeatureCollection`                | `featureCollectionToWkt`     |
+| `convertToWK`                             | `geojsonToWkt`               |
+| `convertFeatureCollectionToWktCollection` | `featureCollectionToWktList` |
+| `parseFromWK`                             | `wktToGeojson`               |
+
+## DOCS
+
+## Variables
+
+### EMPTY_GEOMETRY_COLLECTION_WKT
 
 ```ts
-function convertFeatureCollection(featureCollection: FeatureCollection): string;
+const EMPTY_GEOMETRY_COLLECTION_WKT: 'GEOMETRYCOLLECTION EMPTY' =
+  'GEOMETRYCOLLECTION EMPTY';
 ```
 
-Defined in: [index.ts:43](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L43)
+Defined in: [index.ts:15](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L15)
+
+## Functions
+
+### featureCollectionToWkt()
+
+```ts
+function featureCollectionToWkt(featureCollection: FeatureCollection): string;
+```
+
+Defined in: [index.ts:42](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L42)
 
 Converts a GeoJSON FeatureCollection to WKT GeometryCollection
 
@@ -77,14 +101,12 @@ Converts a GeoJSON FeatureCollection to WKT GeometryCollection
 
 The GeoJSON converted to well known representation
 
-#### Export
-
 ---
 
-### convertFeatureCollectionToWktCollection()
+### featureCollectionToWktList()
 
 ```ts
-function convertFeatureCollectionToWktCollection<P>(
+function featureCollectionToWktList<P>(
   geojson: FeatureCollection<Geometry, P>
 ): P & object[];
 ```
@@ -116,10 +138,10 @@ representing the geometry and all the properties from the original GeoJSON featu
 
 ---
 
-### convertFeatureToWK()
+### featureToWkt()
 
 ```ts
-function convertFeatureToWK(geojson: Feature): string;
+function featureToWkt(geojson: Feature): string;
 ```
 
 Defined in: [index.ts:33](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L33)
@@ -138,40 +160,36 @@ Converts GeoJSON Feature to WKT
 
 The GeoJSON converted to well known text representation
 
-#### Export
-
 ---
 
-### convertGeometryToWK()
+### geojson3dTo2d()
 
 ```ts
-function convertGeometryToWK(geojson: Geometry): string;
+function geojson3dTo2d(geojson: GeoJSON): GeoJSON;
 ```
 
-Defined in: [index.ts:22](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L22)
+Defined in: [index.ts:140](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L140)
 
-Converts GeoJSON Geometry to WKT
+Parse a 3D GeoJSON into a 2D GeoJSON
 
 #### Parameters
 
-| Parameter | Type       | Description                |
-| --------- | ---------- | -------------------------- |
-| `geojson` | `Geometry` | Geometry object to convert |
+| Parameter | Type      | Description                     |
+| --------- | --------- | ------------------------------- |
+| `geojson` | `GeoJSON` | The 3D GeoJSON to convert to 2D |
 
 #### Returns
 
-`string`
+`GeoJSON`
 
-The GeoJSON converted to well known text representation
-
-#### Export
+The GeoJSON as 2D
 
 ---
 
-### convertToWK()
+### geojsonToWkt()
 
 ```ts
-function convertToWK(geojson: GeoJSON): string;
+function geojsonToWkt(geojson: GeoJSON): string;
 ```
 
 Defined in: [index.ts:62](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L62)
@@ -190,17 +208,39 @@ Shorthand to convert GeoJSON Features, Geometries or FeatureCollections to WKT
 
 The GeoJSON as WKT
 
-#### Export
+---
+
+### geometryToWkt()
+
+```ts
+function geometryToWkt(geojson: Geometry): string;
+```
+
+Defined in: [index.ts:23](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L23)
+
+Converts GeoJSON Geometry to WKT
+
+#### Parameters
+
+| Parameter | Type       | Description                |
+| --------- | ---------- | -------------------------- |
+| `geojson` | `Geometry` | Geometry object to convert |
+
+#### Returns
+
+`string`
+
+The GeoJSON converted to well known text representation
 
 ---
 
-### convertWkTo2DWk()
+### wkt3dTo2d()
 
 ```ts
-function convertWkTo2DWk(wkt: string): string;
+function wkt3dTo2d(wkt: string): string;
 ```
 
-Defined in: [index.ts:190](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L190)
+Defined in: [index.ts:195](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L195)
 
 Parse a Z WKT into a 2D WKT
 
@@ -216,47 +256,19 @@ Parse a Z WKT into a 2D WKT
 
 The Z WKT as 2D WKT
 
-#### Export
-
 ---
 
-### convertZGeojsonTo2D()
+### wktToGeojson()
 
 ```ts
-function convertZGeojsonTo2D(geojson: GeoJSON): GeoJSON;
-```
-
-Defined in: [index.ts:126](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L126)
-
-Parse a Z WKT into a 2D GeoJSON Feature or Geometry
-
-#### Parameters
-
-| Parameter | Type      | Description                   |
-| --------- | --------- | ----------------------------- |
-| `geojson` | `GeoJSON` | The WKT to convert to GeoJSON |
-
-#### Returns
-
-`GeoJSON`
-
-The WKT as 2D GeoJSON
-
-#### Export
-
----
-
-### parseFromWK()
-
-```ts
-function parseFromWK(
+function wktToGeojson(
   item: string,
   asFeature?: boolean,
   properties?: GeoJsonProperties
 ): Geometry | Feature<Geometry, GeoJsonProperties>;
 ```
 
-Defined in: [index.ts:101](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L101)
+Defined in: [index.ts:100](https://github.com/alrico88/wkt-parser-helper/blob/master/src/index.ts#L100)
 
 Parse a WKT into a GeoJSON Feature or Geometry
 
@@ -273,5 +285,3 @@ Parse a WKT into a GeoJSON Feature or Geometry
 `Geometry` \| `Feature`\<`Geometry`, `GeoJsonProperties`\>
 
 The WKT as GeoJSON
-
-#### Export
