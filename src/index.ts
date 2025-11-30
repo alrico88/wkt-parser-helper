@@ -12,35 +12,34 @@ import { klona } from 'klona/json';
 
 type Coordinates = Position | Position[] | Position[][] | Position[][][];
 
+export const EMPTY_GEOMETRY_COLLECTION_WKT = 'GEOMETRYCOLLECTION EMPTY';
+
 /**
  * Converts GeoJSON Geometry to WKT
  *
- * @export
  * @param  {Geometry} geojson Geometry object to convert
  * @return {string} The GeoJSON converted to well known text representation
  */
-export function convertGeometryToWK(geojson: Geometry): string {
+export function geometryToWkt(geojson: Geometry): string {
   return geoJSONToWkt(geojson);
 }
 
 /**
  * Converts GeoJSON Feature to WKT
  *
- * @export
  * @param  {Feature} geojson Feature object to convert
  * @return {string} The GeoJSON converted to well known text representation
  */
-export function convertFeatureToWK(geojson: Feature): string {
-  return convertGeometryToWK(geojson.geometry);
+export function featureToWkt(geojson: Feature): string {
+  return geometryToWkt(geojson.geometry);
 }
 
 /**
  * Converts a GeoJSON FeatureCollection to WKT GeometryCollection
- * @export
  * @param  {FeatureCollection} featureCollection The FeatureCollection to convert to WKT
  * @return {string} The GeoJSON converted to well known representation
  */
-export function convertFeatureCollection(
+export function featureCollectionToWkt(
   featureCollection: FeatureCollection
 ): string {
   if (featureCollection.type !== 'FeatureCollection') {
@@ -50,25 +49,24 @@ export function convertFeatureCollection(
   return featureCollection.features.length === 0
     ? 'GEOMETRYCOLLECTION EMPTY'
     : `GEOMETRYCOLLECTION(${featureCollection.features
-        .map((d) => convertFeatureToWK(d))
+        .map((d) => featureToWkt(d))
         .join(',')})`;
 }
 
 /**
  * Shorthand to convert GeoJSON Features, Geometries or FeatureCollections to WKT
  *
- * @export
  * @param  {GeoJSON} geojson The GeoJSON to convert
  * @return {string} The GeoJSON as WKT
  */
-export function convertToWK(geojson: GeoJSON): string {
+export function geojsonToWkt(geojson: GeoJSON): string {
   switch (geojson.type) {
     case 'Feature':
-      return convertFeatureToWK(geojson);
+      return featureToWkt(geojson);
     case 'FeatureCollection':
-      return convertFeatureCollection(geojson);
+      return featureCollectionToWkt(geojson);
     default:
-      return convertGeometryToWK(geojson);
+      return geometryToWkt(geojson);
   }
 }
 
@@ -82,11 +80,11 @@ export function convertToWK(geojson: GeoJSON): string {
  * @returns {(P & { wkt: string })[]} An array of objects where each object contains a `wkt` string
  * representing the geometry and all the properties from the original GeoJSON feature
  */
-export function convertFeatureCollectionToWktCollection<P>(
+export function featureCollectionToWktList<P>(
   geojson: FeatureCollection<Geometry, P>
 ): (P & { wkt: string })[] {
   return geojson.features.map((d) => ({
-    wkt: convertGeometryToWK(d.geometry),
+    wkt: geometryToWkt(d.geometry),
     ...d.properties,
   }));
 }
@@ -94,13 +92,12 @@ export function convertFeatureCollectionToWktCollection<P>(
 /**
  * Parse a WKT into a GeoJSON Feature or Geometry
  *
- * @export
  * @param  {string} item The WKT to convert to GeoJSON
  * @param  {boolean} [asFeature=false] Wrap the converted geometry into a Feature
  * @param  {GeoJsonProperties} [properties={}] Metadata to embed the Feature with
  * @return {(Feature | Geometry)} The WKT as GeoJSON
  */
-export function parseFromWK(
+export function wktToGeojson(
   item: string,
   asFeature = false,
   properties: GeoJsonProperties = {}
@@ -119,22 +116,29 @@ export function parseFromWK(
 }
 
 /**
- * Parse a Z WKT into a 2D GeoJSON Feature or Geometry
+ * Removes 3D coordinates
  *
- * @export
- * @param  {GeoJSON} geojson The WKT to convert to GeoJSON
- * @return {GeoJSON} The WKT as 2D GeoJSON
+ * @param {Coordinates} coords The coordinates to strip the Z of
+ * @return {Coordinates} The coordinates without the Z
  */
-export function convertZGeojsonTo2D(geojson: GeoJSON): GeoJSON {
-  const newGeoJSON = klona(geojson);
-
-  function stripCoords(coords: Coordinates): Coordinates {
-    if (typeof coords[0] === 'number') {
-      return coords.slice(0, 2) as unknown as Coordinates;
-    }
-
-    return (coords as Position[]).map(stripCoords) as unknown as Coordinates;
+function stripZCoordinates(coords: Coordinates): Coordinates {
+  if (typeof coords[0] === 'number') {
+    return coords.slice(0, 2) as unknown as Coordinates;
   }
+
+  return (coords as Position[]).map(
+    stripZCoordinates
+  ) as unknown as Coordinates;
+}
+
+/**
+ * Parse a 3D GeoJSON into a 2D GeoJSON
+ *
+ * @param  {GeoJSON} geojson The 3D GeoJSON to convert to 2D
+ * @return {GeoJSON} The GeoJSON as 2D
+ */
+export function geojson3dTo2d(geojson: GeoJSON): GeoJSON {
+  const newGeoJSON = klona(geojson);
 
   function processGeometry(geom: GeoJSON | GeometryCollection): GeoJSON | null {
     if (geom == null) return null;
@@ -148,7 +152,7 @@ export function convertZGeojsonTo2D(geojson: GeoJSON): GeoJSON {
       case 'MultiLineString':
       case 'Polygon':
       case 'MultiPolygon':
-        geom.coordinates = stripCoords(geom.coordinates);
+        geom.coordinates = stripZCoordinates(geom.coordinates);
 
         break;
       case 'GeometryCollection':
@@ -171,26 +175,25 @@ export function convertZGeojsonTo2D(geojson: GeoJSON): GeoJSON {
 
   if (newGeoJSON.type === 'Feature') {
     return processFeature(newGeoJSON as Feature);
-  } else if (newGeoJSON.type === 'FeatureCollection') {
-    const fc = newGeoJSON as FeatureCollection;
-
-    fc.features = fc.features.map(processFeature);
-
-    return fc;
-  } else {
-    return processGeometry(newGeoJSON) as GeoJSON;
   }
+
+  if (newGeoJSON.type === 'FeatureCollection') {
+    newGeoJSON.features = newGeoJSON.features.map(processFeature);
+
+    return newGeoJSON;
+  }
+
+  return processGeometry(newGeoJSON) as GeoJSON;
 }
 
 /**
  * Parse a Z WKT into a 2D WKT
  *
- * @export
  * @param  {string} wkt The Z WKT to convert to 2D WKT
- * @return {GeoJSON} The Z WKT as 2D WKT
+ * @return {string} The Z WKT as 2D WKT
  */
-export function convertWkTo2DWk(wkt: string): string {
-  const geojson = parseFromWK(wkt);
+export function wkt3dTo2d(wkt: string): string {
+  const geojson = wktToGeojson(wkt);
 
-  return convertToWK(convertZGeojsonTo2D(geojson));
+  return geojsonToWkt(geojson3dTo2d(geojson));
 }
