@@ -47,7 +47,7 @@ export function featureCollectionToWkt(
   }
 
   return featureCollection.features.length === 0
-    ? 'GEOMETRYCOLLECTION EMPTY'
+    ? EMPTY_GEOMETRY_COLLECTION_WKT
     : `GEOMETRYCOLLECTION(${featureCollection.features
         .map((d) => featureToWkt(d))
         .join(',')})`;
