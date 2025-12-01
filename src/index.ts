@@ -102,7 +102,16 @@ export function wktToGeojson(
   asFeature = false,
   properties: GeoJsonProperties = {}
 ): Feature | Geometry {
-  const parsed = wktToGeoJSON(item) as Geometry;
+  let parsed: Geometry;
+
+  if (item === EMPTY_GEOMETRY_COLLECTION_WKT) {
+    parsed = {
+      type: 'GeometryCollection',
+      geometries: [],
+    };
+  } else {
+    parsed = wktToGeoJSON(item) as Geometry;
+  }
 
   if (asFeature) {
     return {

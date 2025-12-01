@@ -204,3 +204,10 @@ test('Support for empty shapes', () => {
     featureCollectionToWkt({ type: 'FeatureCollection', features: [] })
   ).toEqual(EMPTY_GEOMETRY_COLLECTION_WKT);
 });
+
+test('An empty GeometryCollection WKT should NOT return null', () => {
+  expect(wktToGeojson(EMPTY_GEOMETRY_COLLECTION_WKT)).toEqual({
+    type: 'GeometryCollection',
+    geometries: [],
+  });
+});
